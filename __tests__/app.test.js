@@ -10,6 +10,17 @@ afterAll(() => {
   if (db.end) db.end();
 });
 
+describe("pathFindingError", () => {
+  test("Should return 404 if path not found ", () => {
+    return request(app)
+      .get("/api/notapath")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("invalid endpoint path");
+      });
+  });
+});
+
 describe("Get api/topics", () => {
   test("Status 200: Should return with an array length of 3", () => {
     return request(app)
