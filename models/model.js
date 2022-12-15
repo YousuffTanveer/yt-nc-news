@@ -34,7 +34,6 @@ exports.selectArticlesById = (id) => {
   SELECT * FROM articles WHERE article_id = $1`;
 
   return db.query(queryString, [id]).then(({ rows }) => {
-    console.log(rows);
     if (rows.length === 0) {
       return Promise.reject({ status: 404, msg: "article not found" });
     }
