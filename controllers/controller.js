@@ -1,7 +1,7 @@
 const {
   selectTopics,
   selectArticles,
-  selectArticlesById,
+  selectArticleById,
 } = require("../models/model");
 
 exports.getTopics = (req, res, next) => {
@@ -26,7 +26,7 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const { id } = req.params;
-  selectArticlesById(id)
+  selectArticleById(id)
     .then((article) => {
       const articleObj = { article: article[0] };
       res.status(200).send(articleObj);

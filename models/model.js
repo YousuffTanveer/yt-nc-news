@@ -29,16 +29,13 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
   });
 };
 
-exports.selectArticlesById = (id) => {
+exports.selectArticleById = (id) => {
   let queryString = ` 
   SELECT * FROM articles WHERE article_id = $1`;
 
   return db.query(queryString, [id]).then(({ rows }) => {
     if (rows.length === 0) {
       return Promise.reject({ status: 404, msg: "article not found" });
-    }
-    if (!rows) {
-      return Promise.reject({ status: 400, msg: "invalid id" });
     } else {
       return rows;
     }
