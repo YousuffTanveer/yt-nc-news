@@ -106,3 +106,52 @@ describe("Get api/articles/:id", () => {
       });
   });
 });
+
+describe("Get api/articles/:id/comments", () => {
+  test("Should 200: return an array of comments", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsArr = body.comments;
+        console.log(commentsArr);
+        commentsArr.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              article_id: 3,
+              comment_id: expect.any(Number),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              body: expect.any(String),
+              author: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("Should 200: return an array of comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsArr = body.comments;
+        expect(commentsArr).toEqual([]);
+      });
+  });
+  test("Should 404: respond with an error msg of id not found when id does not exist yet", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
+  test("Should 400: respond with an error msg of id invalid if id cannot not exist", () => {
+    return request(app)
+      .get("/api/articles/Orange/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  });
+});
