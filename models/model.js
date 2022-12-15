@@ -10,9 +10,8 @@ exports.selectTopics = () => {
 };
 
 exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
-  let queryValues = [];
-
   const sortBy = ["author", "title", "topic", "created_at", "votes"];
+
   if (!sortBy.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
@@ -26,7 +25,23 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
   queryString += `ORDER BY ${sort_by} ${order};`;
 
   return db.query(queryString).then(({ rows }) => {
-    console.log(rows);
     return rows;
+  });
+};
+
+exports.selectArticlesById = (id) => {
+  let queryString = ` 
+  SELECT * FROM articles WHERE article_id = $1`;
+
+  return db.query(queryString, [id]).then(({ rows }) => {
+    console.log(rows);
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "article not found" });
+    }
+    if (!rows) {
+      return Promise.reject({ status: 400, msg: "invalid id" });
+    } else {
+      return rows;
+    }
   });
 };

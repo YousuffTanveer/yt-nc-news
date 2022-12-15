@@ -46,7 +46,7 @@ describe("Get api/topics", () => {
   });
 });
 
-describe("get articles", () => {
+describe("Get api/articles", () => {
   test("Should 200: return with an array of objects sorted in descending order", () => {
     return request(app)
       .get("/api/articles")
@@ -68,6 +68,41 @@ describe("get articles", () => {
             })
           );
         });
+      });
+  });
+});
+
+describe("Get api/articles/:id", () => {
+  test("Should 200: respond with a single article object", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          author: "icellusedkars",
+          title: "Eight pug gifs that remind me of mitch",
+          article_id: 3,
+          body: "some gifs",
+          topic: "mitch",
+          created_at: "2020-11-03T09:12:00.000Z",
+          votes: 0,
+        });
+      });
+  });
+  test("Should 404: respond with an error msg of id not found when id does not exist yet", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
+  test("Should 400: respond with an error msg of id invalid if id cannot not exist", () => {
+    return request(app)
+      .get("/api/articles/Orange")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
       });
   });
 });
