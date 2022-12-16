@@ -27,7 +27,7 @@ describe("pathFindingError", () => {
 });
 
 describe("Get api/topics", () => {
-  test("Should return with an array with a length of 3 with of object, all of which have a slug and description key  ", () => {
+  test("Should 200: respond with an array with a length of 3 with of object, all of which have a slug and description key  ", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -47,7 +47,7 @@ describe("Get api/topics", () => {
 });
 
 describe("Get api/articles", () => {
-  test("Should 200: return with an array of objects sorted in descending order", () => {
+  test("Should 200: respond with an array of objects sorted in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -108,13 +108,12 @@ describe("Get api/articles/:id", () => {
 });
 
 describe("Get api/articles/:id/comments", () => {
-  test("Should 200: return an array of comments", () => {
+  test("Should 200: respond with an array of comments", () => {
     return request(app)
       .get("/api/articles/3/comments")
       .expect(200)
       .then(({ body }) => {
         const commentsArr = body.comments;
-        console.log(commentsArr);
         commentsArr.forEach((comment) => {
           expect(comment).toEqual(
             expect.objectContaining({
@@ -129,7 +128,7 @@ describe("Get api/articles/:id/comments", () => {
         });
       });
   });
-  test("Should 200: return an array of comments", () => {
+  test("Should 200: respond with an empty array when passed an article with 0 comments", () => {
     return request(app)
       .get("/api/articles/4/comments")
       .expect(200)
