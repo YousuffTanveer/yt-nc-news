@@ -5,11 +5,13 @@ const {
   getTopics,
   getArticles,
   getArticleById,
+  getComments,
 } = require("./controllers/controller");
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
-app.get("/api/articles/:id", getArticleById);
+app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles/:article_id/comments", getComments);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "invalid endpoint path" });

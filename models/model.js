@@ -41,3 +41,12 @@ exports.selectArticleById = (id) => {
     }
   });
 };
+
+exports.selectComments = (id) => {
+  let queryString = `
+  SELECT * FROM comments WHERE article_id = $1`;
+
+  return db.query(queryString, [id]).then(({ rows }) => {
+    return rows;
+  });
+};

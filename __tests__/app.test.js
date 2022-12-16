@@ -27,7 +27,7 @@ describe("pathFindingError", () => {
 });
 
 describe("Get api/topics", () => {
-  test("Should return with an array with a length of 3 with of object, all of which have a slug and description key  ", () => {
+  test("Should 200: respond with an array with a length of 3 with of object, all of which have a slug and description key  ", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -47,7 +47,7 @@ describe("Get api/topics", () => {
 });
 
 describe("Get api/articles", () => {
-  test("Should 200: return with an array of objects sorted in descending order", () => {
+  test("Should 200: respond with an array of objects sorted in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -100,6 +100,54 @@ describe("Get api/articles/:id", () => {
   test("Should 400: respond with an error msg of id invalid if id cannot not exist", () => {
     return request(app)
       .get("/api/articles/Orange")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  });
+});
+
+describe("Get api/articles/:id/comments", () => {
+  test("Should 200: respond with an array of comments", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsArr = body.comments;
+        commentsArr.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              article_id: 3,
+              comment_id: expect.any(Number),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              body: expect.any(String),
+              author: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("Should 200: respond with an empty array when passed an article with 0 comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsArr = body.comments;
+        expect(commentsArr).toEqual([]);
+      });
+  });
+  test("Should 404: respond with an error msg of id not found when id does not exist yet", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
+  test("Should 400: respond with an error msg of id invalid if id cannot not exist", () => {
+    return request(app)
+      .get("/api/articles/Orange/comments")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("invalid id");
