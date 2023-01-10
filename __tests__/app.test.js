@@ -72,7 +72,7 @@ describe("Get api/articles", () => {
   });
 });
 
-describe("Get api/articles/:id", () => {
+describe("Get api/articles/:article_id", () => {
   test("Should 200: respond with a single article object", () => {
     return request(app)
       .get("/api/articles/3")
@@ -107,7 +107,7 @@ describe("Get api/articles/:id", () => {
   });
 });
 
-describe("Get api/articles/:id/comments", () => {
+describe("Get api/articles/:article_id/comments", () => {
   test("Should 200: respond with an array of comments", () => {
     return request(app)
       .get("/api/articles/3/comments")
@@ -154,3 +154,109 @@ describe("Get api/articles/:id/comments", () => {
       });
   });
 });
+
+describe.only("Post api/articles/:article_id/comments", () => {
+  test("Should 201: inserts a new comment into an article", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is the comment butter_bridge made.",
+    };
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            body: "This is the comment butter_bridge made.",
+            comment_id: 19,
+            votes: 0,
+            created_at: expect.any(String),
+            article_id: 6,
+          })
+        );
+      });
+  });
+  test("Should 404: respond with an error msg of id not found when id does not exist yet", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is the comment butter_bridge made.",
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
+  test("Should 400: respond with an error msg of id invalid if id cannot not exist", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is the comment butter_bridge made.",
+    };
+    return request(app)
+      .post("/api/articles/Orange/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  });
+  test("Should 400: when user does not yet exist", () => {
+    const newComment = {
+      username: "yousuffdoesntexist",
+      body: "This is the comment butter_bridge made.",
+    };
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
+      });
+  });
+});
+
+// describe("Patch api/articles/:article_id", () => {
+//   test("Should 200: Should respond with an object of the updated article ", () => {
+//     return request(app)
+//       .patch("/api/article/3")
+//       .send({ inc_votes: 1 })
+//       .expect(200)
+//       .then(({ body }) => {
+//         expect(body).toEqual({
+//           updatedArticle: {
+//             article_id: 3,
+//             title: "Eight pug gifs that remind me of mitch",
+//             topic: "mitch",
+//             author: "icellusedkars",
+//             body: "some gifs",
+//             created_at: "2020-11-03T09:12:00.000Z",
+//             votes: 1,
+//           },
+//         });
+//       });
+//   });
+
+//   test("status 400: respond with status 400 for invalid update request i.e inc_votes: aaa", () => {
+//     return request(app)
+//       .patch("/api/article/3")
+//       .send({ inc_votes: "aaa" })
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe("");
+//       });
+//   });
+
+//   test("status 404: if article non existant", () => {
+//     return request(app)
+//       .patch("/api/article/9999")
+//       .send({ inc_votes: "12" })
+//       .expect(404)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe("");
+//       });
+//   });
+// });

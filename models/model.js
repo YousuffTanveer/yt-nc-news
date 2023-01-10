@@ -50,3 +50,21 @@ exports.selectComments = (id) => {
     return rows;
   });
 };
+
+exports.insertComments = (id, body) => {
+  console.log(id);
+  console.log(body);
+  return db
+    .query(
+      `
+    INSERT INTO comments 
+    (body, article_id, author) 
+    VALUES
+    ($1,$2,$3)
+    RETURNING*`,
+      [body.body, id, body.username]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
