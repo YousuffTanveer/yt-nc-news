@@ -21,7 +21,7 @@ app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComments);
 
-app.patch("api/articles/:article_id", patchArticles);
+app.patch("/api/articles/:article_id", patchArticles);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "invalid endpoint path" });
